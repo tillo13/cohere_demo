@@ -1,15 +1,19 @@
+import cohere
 from dotenv import load_dotenv
 import os
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Retrieve API keys
-COHERE_API_KEY = os.getenv("COHERE_API_KEY")
-STABILITY_API_KEY = os.getenv("STABILITY_API_KEY")
+# Retrieve the API key from environment variables
+api_key = os.getenv("COHERE_API_KEY")
 
-# Check if we've got the keys correctly
-if not (COHERE_API_KEY and STABILITY_API_KEY):
-    raise ValueError("API keys not found. Please check your .env file.")
+# Initialize the Cohere client with your API key
+co = cohere.Client(api_key)
 
-print("API keys loaded successfully.")
+
+# generate a prediction for a prompt
+prediction = co.chat(message='Howdy! 🤠', model='command')
+
+# print the predicted text
+print(f'Chatbot: {prediction.text}')

@@ -9,7 +9,7 @@ import io
 
 from langchain_utils import get_enhanced_prompt
 from nyse_lookup import get_stock_info  
-
+from weaviate_query import get_weaviate_answer
 
 
 # ANSI escape codes for colors
@@ -48,8 +48,14 @@ chat_history = []
 # Display an opening statement before the conversation starts
 print(SEPARATOR)
 print(f"{GREEN}Welcome to Teradata TechStorm using Cohere's conversational AI!{RESET}")
-print("Type 'quit' to end the conversation, 'image: description' to generate an image, and feel free to talk at will!")
+print("Talk normally to the bot, it uses Cohere and will respond in kind!")
+print("===SPECIAL COMMANDS===")
+print("Image: <type something> | This will use Stable Diffusion and LangChain to make an image for you!")
+print("NYSE: <stock symbol> | This will query NYSE stocks for that ticker symbol and LangChain for added data.")
+print("Weaviate: <ask a question about NYSE> | This will query a Weaviate vector DB populated with NYSE data point and use semantic matching!")
+print("Quit will just, well, quit!")
 print(SEPARATOR)
+
 
 # Add a greeting message from the CohereBot
 greeting_message = "Hello! I'm CohereBot. How can I assist you today?"
@@ -67,7 +73,7 @@ try:
         # Add separator and current date and time before each user prompt
         print(SEPARATOR)
         print(f"{WHITE}{current_time}{RESET}")
-        user_input = input(f"{WHITE}You:{RESET} ")
+        user_input = input(f"{WHITE}You say:{RESET} ")
 
 
         if user_input.lower().startswith('nyse:'):  # This makes the prefix check case-insensitive
@@ -95,8 +101,12 @@ try:
             print(f"{YELLOW}CohereBot says:{RESET} {stock_info_message}\n")
             
             # Here we will ask LangChain for interesting facts about the ticker symbol
+            print(SEPARATOR)
+            print(f"{GREEN}Let's ask LangChain for something fun about this ticker symbol: {stock_info['ticker']}...{RESET}\n")
+            print(SEPARATOR)
+
             # We construct the prompt to send to LangChain
-            interesting_facts_prompt = f"tell me some interesting facts about this ticker symbol {ticker_symbol}"
+            interesting_facts_prompt = f"tell me some interesting facts about this NYSE ticker symbol {ticker_symbol}"
 
             # We call get_enhanced_prompt to get the interesting facts from LangChain
             interesting_facts = get_enhanced_prompt(interesting_facts_prompt)
@@ -107,6 +117,29 @@ try:
             # Print the interesting facts in yellow as the bot's response
             print(f"{YELLOW}CohereBot says:{RESET} {interesting_facts}\n")
 
+            continue
+        elif user_input.lower().startswith('weaviate:'):
+            print(f"Ok, pinging Weaviate, hold please...")
+
+            # Extract the query from the user input after the 'weaviate:' prefix
+            weaviate_query = user_input[len('weaviate:'):].strip()
+
+            # Perform the weaviate search and retrieve the answer
+            weaviate_result = get_weaviate_answer(weaviate_query)
+
+            # Check if results were found and print with clean formatting
+            if weaviate_result:
+                weaviate_answer_message = (
+                    f"Closest WCS Question: {weaviate_result['question']}\n"
+                    f"Answer: {weaviate_result['answer']}\n"
+                    f"Category: {weaviate_result['category']}"
+                )
+                chat_history.append({"role": "CHATBOT", "message": weaviate_answer_message})
+                print(f"{YELLOW}CohereBot says:{RESET} {weaviate_answer_message}\n")
+            else:
+                no_answer_message = "No closely related questions found."
+                chat_history.append({"role": "CHATBOT", "message": no_answer_message})
+                print(f"{YELLOW}CohereBot says:{RESET} {no_answer_message}\n")
             continue
 
         # Add user message to chat history
@@ -126,7 +159,7 @@ try:
             safe_description = SAFE_PROMPT_PREFIX + description
             
             # Notify the user that an improved prompt is being requested
-            print(f"Querying LangChain to fancy-up your initial prompt of: {description}...")
+            print(f"Asking LangChain to fancy-up your initial prompt of: {description}...")
             enhanced_prompt = get_enhanced_prompt(safe_description)
 
             # Show the user the enhanced prompt in the console
@@ -199,6 +232,9 @@ try:
             # Capture the generation_id if available
             if hasattr(event, 'generation_id') and event.generation_id:
                 generation_id = event.generation_id
+            else:
+                generation_id = None  # Set generation_id to None if not available
+
             # Print non-text events in green
             if not hasattr(event, 'text'):
                 print(f"{GREEN}Received a non-text event: {event}{RESET}")

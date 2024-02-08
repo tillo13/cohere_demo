@@ -8,6 +8,8 @@ from PIL import Image
 import io
 
 from langchain_utils import get_enhanced_prompt
+from nyse_lookup import get_stock_info  
+
 
 
 # ANSI escape codes for colors
@@ -66,6 +68,46 @@ try:
         print(SEPARATOR)
         print(f"{WHITE}{current_time}{RESET}")
         user_input = input(f"{WHITE}You:{RESET} ")
+
+
+        if user_input.lower().startswith('nyse:'):  # This makes the prefix check case-insensitive
+            # Extract the ticker symbol from the user input after the 'nyse:' prefix
+            ticker_symbol_input = user_input[len('nyse:'):].strip()
+            
+            # Standardize the ticker symbol to uppercase to ensure case-insensitivity
+            ticker_symbol = ticker_symbol_input.upper()
+
+            # Print the temporary message before the lookup
+            print(f"{YELLOW}Un momento, scanning NYSE for {ticker_symbol}...{RESET}")
+
+            # Perform the stock info lookup
+            stock_info = get_stock_info(ticker_symbol)
+
+            # Format the stock information and add it to the chat history
+            stock_info_message = (
+                f"Ticker: {stock_info['ticker']}\n"
+                f"Market Price: {stock_info['market_price']}\n"
+                f"Previous Close Price: {stock_info['previous_close_price']}"
+            )
+            chat_history.append({"role": "CHATBOT", "message": stock_info_message})
+
+            # Print the stock information in yellow as the bot's response
+            print(f"{YELLOW}CohereBot says:{RESET} {stock_info_message}\n")
+            
+            # Here we will ask LangChain for interesting facts about the ticker symbol
+            # We construct the prompt to send to LangChain
+            interesting_facts_prompt = f"tell me some interesting facts about this ticker symbol {ticker_symbol}"
+
+            # We call get_enhanced_prompt to get the interesting facts from LangChain
+            interesting_facts = get_enhanced_prompt(interesting_facts_prompt)
+
+            # Add the interesting facts to the chat history
+            chat_history.append({"role": "CHATBOT", "message": interesting_facts})
+
+            # Print the interesting facts in yellow as the bot's response
+            print(f"{YELLOW}CohereBot says:{RESET} {interesting_facts}\n")
+
+            continue
 
         # Add user message to chat history
         chat_history.append({"role": "USER", "message": user_input})

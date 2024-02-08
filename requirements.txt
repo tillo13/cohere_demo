@@ -1,0 +1,20 @@
+# Core libraries
+python-dateutil==2.8.1.2
+pytz==2021.1
+yfinance==0.1.0
+
+# NLP libraries
+langchain-openai==0.2.2 # LangChain OpenAI integration
+
+# Web libraries
+weaviate-python-client==1.1.1 # Weaviate integration
+
+# AI libraries
+stability-sdk==0.4.1 # Stability SDK for Stable Diffusion
+
+# Additional libraries
+jsonpath==1.4.0 # JSON path expressions
+requests==2.26.0 # HTTP requests
+
+# Development only
+pytest==6.1.1 # Testing framework

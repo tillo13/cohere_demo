@@ -1,6 +1,9 @@
 from langchain_openai import OpenAI  # Updated import
 import os
 from dotenv import load_dotenv
+import warnings
+
+warnings.filterwarnings("ignore", category=ResourceWarning)
 
 # Load environment variables from .env file
 load_dotenv()

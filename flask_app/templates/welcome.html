@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+</head>
+<body>
+    <h1>Welcome to the Chatbot!</h1>
+    <form action="/chat" method="post">
+        <label for="message">Your message here:</label>
+        <input type="text" id="message" name="message">
+        <input type="submit" value="Send">
+    </form>
+    {% if user_message %}
+        <p>You said: {{ user_message }}</p>
+    {% endif %}
+    {% if bot_response %}
+        <p>Bot replied: {{ bot_response }}</p>
+    {% endif %}
+</body>
+</html>

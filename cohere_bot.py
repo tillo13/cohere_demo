@@ -10,6 +10,9 @@ import io
 from langchain_utils import get_enhanced_prompt
 from nyse_lookup import get_stock_info  
 from weaviate_query import get_weaviate_answer
+import warnings
+
+warnings.filterwarnings("ignore", category=ResourceWarning)
 
 
 # ANSI escape codes for colors
@@ -209,6 +212,7 @@ try:
                             img.save(image_path)
                             print(f"Image saved to: {image_path}")
                             img.show()
+
                 else:
                     print("No image was generated.")
             continue

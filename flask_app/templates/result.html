@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        h3 {
+            color: #555;
+            margin-top: 20px;
+        }
+
+        .message-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .user-message {
+            background-color: #eaf6ff;
+        }
+
+        .bot-message {
+            background-color: #f4f4f4;
+        }
+
+        .conversation-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #f7f7f7;
+        }
+
+        .conversation {
+            white-space: pre-line;
+            font-family: monospace;
+            padding: 5px;
+        }
+
+        .input-form {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .input-form input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .input-form input[type="submit"] {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat Result</h1>
+
+    <div class="message-container user-message">
+        <h3>User Input:</h3>
+        <p>{{ message }}</p>
+    </div>
+
+    <div class="message-container bot-message">
+        <h3>Bot Response:</h3>
+        <p>{{ response }}</p>
+    </div>
+
+    <div class="conversation-container">
+        <h3>Conversation:</h3>
+        <pre class="conversation">{{ conversation }}</pre>
+    </div>
+
+    <form class="input-form" action="/chat" method="POST">
+        <input type="text" name="message" placeholder="Type your message">
+        <input type="submit" value="Send">
+    </form>
+</body>
+</html>

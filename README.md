@@ -32,7 +32,7 @@ This will start the program, and the bot will be ready to receive user input. Th
 
 - **Conversational AI:** The bot can engage in natural language conversations with users, responding to their input with human-like messages.
 - **Stock Market Information:** Provide real-time data for a given ticker symbol.
-- **Image Generation:** Generate images based on user-provided descriptions, using the Stable Diffusion API.
+- **Image Generation:** Generate images based on user-provided descriptions, using the Stability.ai API.
 - **Language Model Integration:** Uses OpenAI's LangChain to enhance user prompts.
 
 ## Examples
